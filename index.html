@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>字符串生成器</title>
+    <style>
+        /* 基础样式与iPhone适配 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: #333;
+            line-height: 1.5;
+            padding: 15px;
+            min-height: 100vh;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-section, .output-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.95rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        }
+        
+        .mode-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+        
+        .mode-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 16px 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 55px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mode-btn.active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        #simpleBtn {
+            background: linear-gradient(135deg, #36D1DC, #5B86E5);
+            color: white;
+        }
+        
+        #simpleBtn.active {
+            background: linear-gradient(135deg, #2aa8b1, #4a6fc4);
+        }
+        
+        #normalBtn {
+            background: linear-gradient(135deg, #FF9A9E, #FAD0C4);
+            color: #333;
+        }
+        
+        #normalBtn.active {
+            background: linear-gradient(135deg, #e88a8e, #e8c0b4);
+        }
+        
+        #advancedBtn {
+            background: linear-gradient(135deg, #A8E6CF, #DCEDC1);
+            color: #333;
+        }
+        
+        #advancedBtn.active {
+            background: linear-gradient(135deg, #93d1b9, #c7d9b1);
+        }
+        
+        .mode-desc {
+            font-size: 0.75rem;
+            font-weight: normal;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+        
+        .output-display {
+            background-color: #f9f9f9;
+            border: 1.5px dashed #ddd;
+            border-radius: 8px;
+            padding: 18px;
+            min-height: 100px;
+            font-size: 1.1rem;
+            word-break: break-all;
+            overflow-wrap: break-word;
+            transition: all 0.2s;
+        }
+        
+        .output-display.has-result {
+            border-color: #4CAF50;
+            background-color: #f0f9f0;
+        }
+        
+        .output-placeholder {
+            color: #aaa;
+            font-style: italic;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.95rem;
+        }
+        
+        .output-result {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        
+        .mode-indicator {
+            font-size: 0.8rem;
+            color: #666;
+            padding: 4px 8px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        .rules-section {
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            padding: 18px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .rules-title {
+            font-size: 1rem;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .rules-list {
+            list-style-type: none;
+        }
+        
+        .rules-list li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .rules-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .status-message {
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            display: none;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 0.2s ease-in-out;
+        }
+        
+        /* 新增：操作栏样式（清空+复制按钮） */
+        .operate-bar {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #666;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .clear-link {
+            color: #4CAF50;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* 复制按钮样式 */
+        .copy-btn {
+            padding: 6px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background-color: #3d8b40;
+        }
+        
+        .copy-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            color: #666;
+        }
+        
+        @media (max-width: 375px) {
+            body {
+                padding: 12px;
+                max-width: 100%;
+            }
+            
+            .header, .mode-section, .input-section, .output-section {
+                padding: 16px;
+            }
+            
+            .mode-btn {
+                padding: 14px 8px;
+                font-size: 0.95rem;
+                min-height: 50px;
+            }
+            
+            .mode-desc {
+                font-size: 0.7rem;
+            }
+            
+            .output-display {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (orientation: landscape) and (max-height: 400px) {
+            .main-content {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .mode-section, .input-section {
+                flex: 1;
+                min-width: 48%;
+            }
+            
+            .output-section, .rules-section {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <!-- 输入区域：移除了示例输入模块 -->
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="inputString">输入原始字符串：</label>
+                    <input type="text" id="inputString" class="input-field" 
+                           placeholder="请输入英文字母，如：efg, zfb, albz" 
+                           value="efg">
+                </div>
+            </div>
+            
+            <!-- 模式选择区域 -->
+            <div class="mode-section">
+                <div class="section-title">选择生成模式（点击直接生成）</div>
+                <div class="mode-buttons">
+                    <button id="simpleBtn" class="mode-btn active" data-mode="simple">简单</button>
+                    <button id="normalBtn" class="mode-btn" data-mode="normal">一般</button>
+                    <button id="advancedBtn" class="mode-btn" data-mode="advanced">高级</button>
+                </div>
+            </div>
+            
+            <!-- 输出区域：清空提示改为操作栏，新增复制按钮 -->
+            <div class="output-section">
+                <div class="section-title">生成结果</div>
+                <div id="outputDisplay" class="output-display">
+                    <div class="output-placeholder">请选择模式并输入字符串，然后点击上方按钮生成</div>
+                </div>
+                
+                <!-- 替换原有clear-hint为operate-bar，加入复制按钮 -->
+                <div class="operate-bar">
+                    <span>需要清空输入？<span class="clear-link" id="clearLink">点击这里</span></span>
+                    <button class="copy-btn" id="copyBtn" disabled>复制生成结果</button>
+                </div>
+            </div>
+            
+            <!-- 规则说明 -->
+            <div class="rules-section">
+                <div class="rules-title">生成规则说明：</div>
+                <ul class="rules-list">
+                    <li><strong>简单</strong>：输入字符串 + "MM" + 最后一个字符的后一个字母 + "001"</li>
+                    <li><strong>一般</strong>：简单结果 + 字母个数 + "236"</li>
+                    <li><strong>高级</strong>：一般结果 + 第一个字母的前一个字母（边界：a前填a，z后填z）</li>
+                    <li><strong>常用</strong>：支-2529**/股-0126**/锁-00123*/11125*/60051*/万-6424**/</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentMode = 'simple';
+        // 全局获取复制按钮
+        const copyBtn = document.getElementById('copyBtn');
+
+        function generateString(inputStr, mode) {
+            if (!inputStr || inputStr.trim() === '') {
+                return { result: '请输入有效的字符串', error: true };
+            }
+            if (!/^[a-zA-Z]+$/.test(inputStr)) {
+                return { result: '请输入纯英文字母（不包含数字、空格或特殊字符）', error: true };
+            }
+            const str = inputStr.toLowerCase();
+            const length = str.length;
+            let result = str + "MM";
+            const lastChar = str.charAt(length - 1);
+            const nextChar = lastChar === 'z' ? 'z' : String.fromCharCode(lastChar.charCodeAt(0) + 1);
+            result += nextChar + "001";
+            if (mode === 'simple') return { result: result, error: false };
+            result += length.toString() + "236";
+            if (mode === 'normal') return { result: result, error: false };
+            const firstChar = str.charAt(0);
+            const prevChar = firstChar === 'a' ? 'a' : String.fromCharCode(firstChar.charCodeAt(0) - 1);
+            result += prevChar;
+            return { result: result, error: false };
+        }
+
+        function showStatus(message, type) {
+            let statusElement = document.getElementById('statusMessage');
+            if (!statusElement) {
+                statusElement = document.createElement('div');
+                statusElement.id = 'statusMessage';
+                document.querySelector('.output-section').appendChild(statusElement);
+            }
+            statusElement.textContent = message;
+            statusElement.className = 'status-message';
+            statusElement.classList.add(`status-${type}`);
+            statusElement.style.display = 'block';
+            setTimeout(() => {
+                statusElement.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateOutput(generationResult, mode) {
+            const outputDisplay = document.getElementById('outputDisplay');
+            const placeholder = outputDisplay.querySelector('.output-placeholder');
+            if (placeholder) outputDisplay.removeChild(placeholder);
+            
+            const resultElement = document.createElement('div');
+            resultElement.className = 'output-result fade-in';
+            resultElement.id = 'generateResult'; // 给结果加唯一ID，方便复制
+            resultElement.textContent = generationResult.result;
+            
+            const modeIndicator = document.createElement('div');
+            modeIndicator.className = 'mode-indicator';
+            modeIndicator.textContent = `生成模式：${getModeName(mode)}`;
+            
+            outputDisplay.innerHTML = '';
+            outputDisplay.appendChild(resultElement);
+            outputDisplay.appendChild(modeIndicator);
+
+            // 控制复制按钮状态：有有效结果则启用，否则禁用
+            if (generationResult.error) {
+                outputDisplay.classList.remove('has-result');
+                resultElement.style.color = '#dc3545';
+                copyBtn.disabled = true;
+                showStatus(generationResult.result, 'error');
+            } else {
+                outputDisplay.classList.add('has-result');
+                resultElement.style.color = '#2c3e50';
+                copyBtn.disabled = false;
+                showStatus(`字符串已成功生成（${getModeName(mode)}模式）`, 'success');
+            }
+        }
+
+        // 新增：复制按钮点击事件
+        copyBtn.addEventListener('click', function() {
+            const resultText = document.getElementById('generateResult')?.textContent;
+            if (!resultText) return;
+            navigator.clipboard.writeText(resultText).then(() => {
+                const originalText = this.textContent;
+                this.textContent = '已复制！';
+                showStatus('生成结果已复制到剪贴板', 'success');
+                setTimeout(() => {
+                    this.textContent = originalText;
+                }, 1500);
+            }).catch(() => {
+                showStatus('复制失败，请手动复制', 'error');
+            });
+        });
+
+        function getModeName(mode) {
+            const modeNames = { 'simple': '简单', 'normal': '一般', 'advanced': '高级' };
+            return modeNames[mode] || '未知';
+        }
+
+        const inputString = document.getElementById('inputString');
+        const simpleBtn = document.getElementById('simpleBtn');
+        const normalBtn = document.getElementById('normalBtn');
+        const advancedBtn = document.getElementById('advancedBtn');
+        const clearLink = document.getElementById('clearLink');
+
+        // 模式按钮通用点击逻辑
+        function modeBtnClick(btn, mode) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active', 'pulse');
+            setTimeout(() => btn.classList.remove('pulse'), 200);
+            currentMode = mode;
+            const inputValue = inputString.value.trim();
+            const generationResult = generateString(inputValue, currentMode);
+            updateOutput(generationResult, currentMode);
+        }
+
+        simpleBtn.addEventListener('click', () => modeBtnClick(simpleBtn, 'simple'));
+        normalBtn.addEventListener('click', () => modeBtnClick(normalBtn, 'normal'));
+        advancedBtn.addEventListener('click', () => modeBtnClick(advancedBtn, 'advanced'));
+
+        // 清空逻辑：清空后禁用复制按钮
+        clearLink.addEventListener('click', function() {
+            inputString.value = '';
+            const outputDisplay = document.getElementById('outputDisplay');
+            outputDisplay.innerHTML = '<div class="output-placeholder">请选择模式并输入字符串，然后点击上方按钮生成</div>';
+            outputDisplay.classList.remove('has-result');
+            copyBtn.disabled = true; // 清空后禁用复制
+            inputString.focus();
+            showStatus('已清空输入内容', 'success');
+        });
+
+        // 回车键触发
+        inputString.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const activeButton = document.querySelector('.mode-btn.active');
+                activeButton && activeButton.click();
+            }
+        });
+
+        // 页面加载自动生成示例
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => simpleBtn.click(), 500);
+        });
+    </script>
+</body>
+</html>
